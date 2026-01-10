@@ -31,3 +31,32 @@
 │  - Apps internos            │
 └─────────────────────────────┘
 
+Arquitetura de Boot com Limine
+
+UEFI / BIOS
+   ↓
+Limine Bootloader
+   ↓
+Linux Kernel
+   ↓
+initramfs
+   ↓
+Linux Minimal
+   ↓
+Openbox + Containers
+
+
+Layout de Disco Recomendado
+/dev/sda
+├─ sda1  EFI System Partition (FAT32) 512MB
+│   └─ /EFI/limine/
+│       ├─ limine-uefi-x86_64.efi
+│       └─ limine.cfg
+└─ sda2  Root (ext4 ou squashfs)
+
+Instalando o Limine
+
+git clone https://github.com/limine-bootloader/limine.git
+cd limine
+make
+

@@ -287,9 +287,9 @@ Pode rodar:
 
 ### Fase 3 – Controle
 
-* [ ] Menu gráfico
-* [ ] Seleção de servidor
-* [ ] Autoconfig por MAC
+* [x] Menu gráfico
+* [x] Seleção de servidor
+* [x] Autoconfig por MAC
 
 ### Fase 4 – Enterprise
 
