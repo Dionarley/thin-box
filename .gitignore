@@ -1,13 +1,15 @@
-# Host configs
+# Local desktop / dev configs
 .config/
 
 # Build artifacts
 *.img
 *.iso
 *.qcow2
-
-# QEMU
-OVMF.fd
+*.raw
 
 # Logs
 *.log
+
+# Editor / IDE
+.vscode/
+.idea/
