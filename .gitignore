@@ -1,0 +1,16 @@
+
+workspace/*
+
+# Micro editor
+config/*
+
+# Cache
+*.swp
+*.tmp
+
+# Docker
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,1 +1,35 @@
 A Thin Box Client For Real World Devices
+
+┌─────────────────────────────┐
+│        Hardware             │
+│ (PC / Thin Client / SBC)    │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│   Linux Minimal (Host)      │
+│  - Kernel custom            │
+│  - NetworkManager           │
+│  - systemd                  │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│     Openbox (UI)            │
+│  - autostart.sh             │
+│  - tint2 / polybar          │
+│  - rofi / dmenu             │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│  Container Runtime Layer    │
+│  ├─ Docker                  │
+│  └─ LXC                     │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│   Containers Gráficos       │
+│  - RDP client               │
+│  - VNC client               │
+│  - Chromium kiosk           │
+│  - Apps internos            │
+└─────────────────────────────┘
+
