@@ -1,51 +1,48 @@
 #!/bin/busybox sh
-set -eu
+set -e
 
 export PATH=/bin:/sbin
 
-echo "[thin-box] initramfs starting"
+mount -t proc none /proc
 
-mount -t proc proc /proc
-mount -t sysfs sys /sys
-mount -t devtmpfs dev /dev
+RESET_FACTORY=0
 
-# Espera uevent
-sleep 2
+for arg in $(cat /proc/cmdline); do
+  case "$arg" in
+    thinbox.reset=1)
+      RESET_FACTORY=1
+      ;;
+  esac
+done
+
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+
+echo "[initramfs] Starting Thin Box init..."
 
 mkdir -p /newroot
 
-# Resolve partições por LABEL
-ROOT_RO="/dev/disk/by-label/THIN_RO"
-ROOT_RW="/dev/disk/by-label/THIN_RW"
+# Aguarda dispositivos
+sleep 2
 
-if [ ! -e "$ROOT_RO" ] || [ ! -e "$ROOT_RW" ]; then
-    echo "[thin-box] ERROR: root partitions not found"
-    sh
-fi
+# Ajuste conforme device real (QEMU: /dev/vda)
+ROOTDEV="/dev/vda2"
 
-echo "[thin-box] mounting RO partition"
-mount "$ROOT_RO" /newroot
+mount "$ROOTDEV" /newroot
 
-# SquashFS
+# Mount squashfs
 mkdir -p /newroot/lower
 mount -t squashfs /newroot/rootfs.squashfs /newroot/lower
 
-# Overlay dirs (persistentes)
-mkdir -p /newroot/rw
-mount "$ROOT_RW" /newroot/rw
+# Overlay
+mkdir -p /newroot/{upper,work,root}
 
-mkdir -p /newroot/rw/{upper,work}
-mkdir -p /newroot/root
+RESET_FLAG="/rw/FACTORY_RESET"
 
-echo "[thin-box] mounting overlayfs"
 mount -t overlay overlay \
-  -o lowerdir=/newroot/lower,upperdir=/newroot/rw/upper,workdir=/newroot/rw/work \
+  -o lowerdir=/newroot/lower,upperdir=/newroot/upper,workdir=/newroot/work \
   /newroot/root
 
-# Move mounts essenciais
-mount --move /proc /newroot/root/proc
-mount --move /sys  /newroot/root/sys
-mount --move /dev  /newroot/root/dev
+echo "[initramfs] Switching root..."
 
-echo "[thin-box] switching root"
 exec switch_root /newroot/root /sbin/init
