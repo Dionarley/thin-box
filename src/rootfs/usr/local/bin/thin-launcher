@@ -1,0 +1,7 @@
+#!/bin/sh
+
+exec chromium \
+  --kiosk \
+  --noerrdialogs \
+  --disable-infobars \
+  https://example.com

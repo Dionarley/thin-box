@@ -1,0 +1,9 @@
+#!/bin/sh
+
+setxkbmap br
+
+# Painel
+tint2 &
+
+# Launcher principal
+/usr/local/bin/thin-launcher &

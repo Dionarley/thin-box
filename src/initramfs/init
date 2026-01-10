@@ -1,0 +1,51 @@
+#!/bin/busybox sh
+set -eu
+
+export PATH=/bin:/sbin
+
+echo "[thin-box] initramfs starting"
+
+mount -t proc proc /proc
+mount -t sysfs sys /sys
+mount -t devtmpfs dev /dev
+
+# Espera uevent
+sleep 2
+
+mkdir -p /newroot
+
+# Resolve partições por LABEL
+ROOT_RO="/dev/disk/by-label/THIN_RO"
+ROOT_RW="/dev/disk/by-label/THIN_RW"
+
+if [ ! -e "$ROOT_RO" ] || [ ! -e "$ROOT_RW" ]; then
+    echo "[thin-box] ERROR: root partitions not found"
+    sh
+fi
+
+echo "[thin-box] mounting RO partition"
+mount "$ROOT_RO" /newroot
+
+# SquashFS
+mkdir -p /newroot/lower
+mount -t squashfs /newroot/rootfs.squashfs /newroot/lower
+
+# Overlay dirs (persistentes)
+mkdir -p /newroot/rw
+mount "$ROOT_RW" /newroot/rw
+
+mkdir -p /newroot/rw/{upper,work}
+mkdir -p /newroot/root
+
+echo "[thin-box] mounting overlayfs"
+mount -t overlay overlay \
+  -o lowerdir=/newroot/lower,upperdir=/newroot/rw/upper,workdir=/newroot/rw/work \
+  /newroot/root
+
+# Move mounts essenciais
+mount --move /proc /newroot/root/proc
+mount --move /sys  /newroot/root/sys
+mount --move /dev  /newroot/root/dev
+
+echo "[thin-box] switching root"
+exec switch_root /newroot/root /sbin/init

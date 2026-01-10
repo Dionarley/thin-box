@@ -1,16 +1,13 @@
+# Host configs
+.config/
 
-workspace/*
+# Build artifacts
+*.img
+*.iso
+*.qcow2
 
-# Micro editor
-config/*
+# QEMU
+OVMF.fd
 
-# Cache
-*.swp
-*.tmp
-
-# Docker
+# Logs
 *.log
-
-# OS
-.DS_Store
-Thumbs.db
